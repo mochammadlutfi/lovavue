@@ -65,16 +65,31 @@
         <!-- Profile Dropdown Button -->
         <div class="relative">
             <el-dropdown trigger="click" v-if="user">
-                <button data-fc-type="dropdown" data-fc-placement="bottom-end" type="button" class="nav-link">
-                    <img :src="user.avatar" alt="user-image" class="rounded-full h-10">
-                    <div class="d-flex">
-                        
+                <button data-fc-type="dropdown" data-fc-placement="bottom-end" type="button">
+                    <div class="flex">
+                        <img :src="user.avatar" alt="user-image" class="rounded-md h-10">
+                        <div class="md:block hidden my-auto ml-2 text-left">
+                            <div class="font-semibold fs-md mb-0 leading-none text-[#536485] ">{{ user.name }}</div>
+                            <span class="opacity-[0.7] fs-sm font-normal text-[#536485] block">{{ user.username }}</span>
+                        </div>
                     </div>
                 </button>
                 <template #dropdown>
-                    <el-dropdown-menu class="w-44">
-                        <el-dropdown-item @click.prevent="logout">
-                            <i class="mgc_exit_line  me-2"></i>
+                    <el-dropdown-menu class="w-44 p-2 rounded-md">
+                        <el-dropdown-item class="rounded">
+                            <router-link to="/profile">
+                                <i class="mgc_user_3_line text-md mr-4"></i>
+                                <span>Profile</span>
+                            </router-link>
+                        </el-dropdown-item>
+                        <el-dropdown-item class="rounded">
+                            <router-link to="/profile/password">
+                                <i class="mgc_lock_line text-md mr-4"></i>
+                                <span>Password</span>
+                            </router-link>
+                        </el-dropdown-item>
+                        <el-dropdown-item @click.prevent="logout" class="rounded">
+                            <i class="mgc_exit_line text-md mr-4"></i>
                             <span>Log Out</span>
                         </el-dropdown-item>
                     </el-dropdown-menu>

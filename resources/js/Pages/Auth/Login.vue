@@ -12,19 +12,17 @@
                         <el-input
                             v-model="form.email"
                             type="text"
-                            placeholder="Masukan Username / Email"
                         />
                     </el-form-item>
-                    <el-form-item label="Masukan password" :error="errors.password">
+                    <el-form-item label="Password" :error="errors.password">
                         <el-input
                             v-model="form.password"
                             type="password"
-                            placeholder="Masukan password"
                             show-password
                         />
                     </el-form-item>
                     <el-button native-type="submit" type="primary" class="w-full" :loading="loading">
-                        Login Sekarang
+                        Login
                     </el-button>
                 </el-form>
             </div>
@@ -52,18 +50,19 @@ const appBase = useAppBaseStore();
 const app = computed(() => appBase.app);
 
 const submit = async () => {
-  loading.value = true;
-  try {
-    const response = await axios.post('/login', form.value);
-    const data = response.data.result;
-    authStore.updateToken(data.access_token);
-    authStore.updateUser(data.user);
-    router.push('/dashboard');
-  } catch (error) {
-    errors.value = error.validation; // Example error handling
-  } finally {
-    loading.value = false;
-  }
+    loading.value = true;
+    try {
+        const response = await axios.post('/login', form.value);
+        const data = response.data.result;
+        authStore.updateToken(data.access_token);
+        authStore.updateUser(data.user);
+        authStore.updatePermissions(data.permissions);
+        router.push('/dashboard');
+    } catch (error) {
+        errors.value = error.validation;
+    } finally {
+        loading.value = false;
+    }
 };
 
 </script>

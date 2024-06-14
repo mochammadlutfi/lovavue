@@ -1,21 +1,24 @@
 <template>
     <el-card class="shadow-sm sm:rounded-lg" v-loading="loading">
         <el-form :model="form" @submit.prevent="onSubmit" label-position="top">
+            <el-form-item :label="$t('user.avatar')" :error="errors.company_address">
+                <upload-image v-model="form.logo_dark_sm"/>
+            </el-form-item>
             <el-row :gutter="20">
-                <el-col :md="8">
-                    <el-form-item :label="$t('avatar')" :error="errors.company_address">
-                        <upload-image v-model="form.logo_dark_sm"/>
-                    </el-form-item>
-                </el-col>
-                <el-col :md="16">
+                <el-col :md="12">
                     <el-form-item :label="$t('name')" :error="errors.app_name">
                         <el-input v-model="form.app_name" />
                     </el-form-item>
                     <el-form-item :label="$t('username')" :error="errors.company_email">
                         <el-input v-model="form.company_email" />
                     </el-form-item>
+                </el-col>
+                <el-col :md="12">
                     <el-form-item :label="$t('email')" :error="errors.company_name">
                         <el-input v-model="form.company_name" />
+                    </el-form-item>
+                    <el-form-item :label="$t('phone')" :error="errors.company_phone">
+                        <el-input v-model="form.company_phone" />
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -77,10 +80,16 @@ const fetchData = async () => {
     loading.value = true;
     const response = await axios.get('/profile');
     if (response.status === 200) {
-      form.value.avatar = response.data.avatar;
-      form.value.name = response.data.name;
-      form.value.username = response.data.username;
-      form.value.email = response.data.email;
+      form.value.app_name = response.data.app_name;
+      form.value.company_name = response.data.company_name;
+      form.value.company_email = response.data.company_email;
+      form.value.company_phone = response.data.company_phone;
+      form.value.company_address = response.data.company_address;
+      form.value.logo_light = response.data.logo_light;
+      form.value.logo_dark = response.data.logo_dark;
+      form.value.logo_light_sm = response.data.logo_light_sm;
+      form.value.logo_dark_sm = response.data.logo_dark_sm;
+      form.value.branch = response.data.branch;
     }
   } catch (error) {
     console.error(error);
@@ -89,7 +98,7 @@ const fetchData = async () => {
   }
 };
 onMounted(() => {
-  emit('childinit', 'Edit Profile');
+  emit('childinit', 'Devices');
   fetchData();
 });
 </script>

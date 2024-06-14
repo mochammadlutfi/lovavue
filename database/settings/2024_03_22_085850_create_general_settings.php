@@ -12,13 +12,12 @@ return new class extends SettingsMigration
         $this->migrator->add('general.company_email', "lovacode@gmail.com");
         $this->migrator->add('general.company_phone', "6213214123");
         $this->migrator->add('general.company_address', "Road Runner 21");
-        $this->migrator->add('general.favicon', '/logo/favicon.png');
-        $this->migrator->add('general.logo_light', '/logo/logo-light.png');
-        $this->migrator->add('general.logo_dark', '/logo/logo-dark.png');
-        $this->migrator->add('general.logo_light_sm', '/logo/logo-sm.png');
-        $this->migrator->add('general.logo_dark_sm', '/logo/logo-sm.png');
+        $this->migrator->add('general.favicon', '/images/logo/favicon.png');
+        $this->migrator->add('general.logo_light', '/images/logo/logo-light.png');
+        $this->migrator->add('general.logo_dark', '/images/logo/logo-dark.png');
+        $this->migrator->add('general.logo_light_sm', '/images/logo/logo-sm.png');
+        $this->migrator->add('general.logo_dark_sm', '/images/logo/logo-sm.png');
         $this->migrator->add('general.locale', 'en');
-        $this->migrator->add('general.currency', 'idr');
         $this->migrator->add('general.branch', 1);
     }
 
@@ -34,9 +33,9 @@ return new class extends SettingsMigration
         $this->migrator->delete('general.favicon');
         $this->migrator->delete('general.logo_light');
         $this->migrator->delete('general.logo_dark');
-        $this->migrator->delete('general.logo_sm');
+        $this->migrator->delete('general.logo_light_sm');
+        $this->migrator->delete('general.logo_dark_sm');
         $this->migrator->delete('general.locale');
         $this->migrator->delete('general.branch');
-        $this->migrator->delete('general.currency');
     }
 };

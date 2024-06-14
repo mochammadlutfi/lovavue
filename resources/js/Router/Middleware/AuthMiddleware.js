@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/auth.js'
+import { useAuthStore } from '@/stores/auth.js';
 
 export default (to, from, next) => {
 	const auth = useAuthStore()
@@ -30,6 +30,4 @@ export default (to, from, next) => {
         }
 		next()
 	}
-    
-    
 }

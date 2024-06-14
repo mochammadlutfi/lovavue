@@ -11,6 +11,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Facades\Validator;
 use Hash;
 use Carbon\Carbon;
+use Browser;
 
 class AuthController extends Controller
 {
@@ -62,6 +63,19 @@ class AuthController extends Controller
                         'token_type' => 'Bearer ',
                     ];
 
+                    $browser = Browser::parse($request->userAgent());
+                    $device = $browser->platformName() . ' / ' . $browser->browserName();
+            
+                    $sanctumToken = $user->createToken(
+                        $device,
+                        ['*'],
+                        $request->remember ?
+                            now()->addMonth() :
+                            now()->addDay()
+                    );
+            
+                    $sanctumToken->accessToken->ip = $request->ip();
+                    $sanctumToken->accessToken->save();
                     return response()->json([
                         'success' => true,
                         'result' => $data

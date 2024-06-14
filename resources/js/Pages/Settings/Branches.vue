@@ -24,7 +24,7 @@
                     <i class="mgc_filter_line me-2"></i>
                     Filter
                 </el-button>
-                <el-button type="primary" @click.prevent="create">
+                <el-button type="primary" @click.prevent="create" v-if="auth.hasPermission('branch.create')">
                     <i class="mgc_add_line me-2"></i>
                     {{ $t('create') }}
                 </el-button>
@@ -65,17 +65,17 @@
             <el-table-column prop="address" :label="$t('address')" header-align="center"/>
             <el-table-column :label="$t('action')" align="center" width="100">
                 <template #default="scope">
-                    <el-dropdown popper-class="dropdown-action" trigger="click">
+                    <el-dropdown popper-class="dropdown-action" trigger="click" v-if="auth.hasPermission('branch.delete') || auth.hasPermission('branch.update')">
                         <el-button type="primary">
                         {{ $t('action') }}
                         </el-button>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item @click.prevent="onEdit(scope.row.id)">
+                                <el-dropdown-item @click.prevent="onEdit(scope.row.id)" v-if="auth.hasPermission('branch.update')">
                                     <i class="mgc_edit_line"></i>
                                     {{  $t('edit') }}
                                 </el-dropdown-item>
-                                <el-dropdown-item @click.prevent="onDelete(scope.row.id)" v-if="scope.row.id != 1">
+                                <el-dropdown-item @click.prevent="onDelete(scope.row.id)" v-if="auth.hasPermission('branch.delete')">
                                     <i class="mgc_delete_2_line"></i>
                                     {{ $t('delete') }}
                                 </el-dropdown-item>
@@ -123,144 +123,127 @@
         </el-form>
     </el-dialog>
 </template>
-<script>
+<script setup>
+import { ref, reactive, onMounted } from 'vue';
 import SelectUser from "@/Components/Form/SelectUser.vue";
-export default {
-    components : {
-        SelectUser
-    },
-    data(){
-        return {
-            loading : false,
-            dataList : [],
-            params : {
-                page : 1,
-                limit : 25,
-                from : 0,
-                to : 0,
-                total  : 0,
-                pageSize : 0,
-                name : null,
-                manager_id : null,
-                address : null,
-            },
-            filterShow : false,
-            modalTitle : this.$t('create') + ' ' + this.$t('branch'),
-            modalForm : false,
-            form : {
-                id : null,
-                name : null,
-                manager_id : null,
-                address : null,
-            },
-            errors : {}
+import axios from 'axios';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { useAuthStore } from '@/stores/auth';
+const auth = useAuthStore();
+
+const loading = ref(false);
+const dataList = ref([]);
+const params = reactive({
+    page: 1,
+    limit: 25,
+    from: 0,
+    to: 0,
+    total: 0,
+    pageSize: 0,
+    name: null,
+    manager_id: null,
+    address: null,
+});
+const filterShow = ref(false);
+const modalTitle = ref(''); // Initialize with empty string or a default value
+const modalForm = ref(false);
+const form = reactive({
+    id: null,
+    name: null,
+    manager_id: null,
+    address: null,
+});
+const errors = ref({});
+
+// Convert methods to functions
+const resetFilter = () => {
+    params.name = null;
+    params.address = null;
+    fetchData(1);
+};
+
+console.log(auth.hasPermission('branch.create'));
+
+const fetchData = async (page = 1) => {
+    try {
+        errors.value = {};
+        loading.value = true;
+        const response = await axios.get('/settings/branch', { params });
+        if (response.status === 200) {
+            dataList.value = response.data.data;
+            Object.assign(params, {
+                from: response.data.from,
+                to: response.data.to,
+                page: response.data.current_page,
+                total: response.data.total,
+                pageSize: response.data.per_page,
+            });
         }
-    },
-    async mounted(){
-        await this.fetchData()
-    },
-    methods : {
-        resetFilter()
-        {
-            this.params.name = null;
-            this.params.address = null;
-            this.fetchData(1);
-        },
-        async fetchData(page) {
-            var page = (page == undefined) ? 1 : page;
-            try {
-                this.errors = {};
-                this.loading = true;
-                const response = await axios.get('/settings/branch',{
-                    params: this.params
-                });
-                if(response.status == 200){
-                    this.dataList = response.data.data;
-                    this.params.from = response.data.from;
-                    this.params.to = response.data.to;
-                    this.params.page = response.data.current_page;
-                    this.params.total = response.data.total;
-                    this.params.pageSize = response.data.per_page;
-                }
-                this.loading = false;
-            } catch (error) {
-                console.error(error);
-            }
-        },
-        async onSubmit()
-        {
-            this.loadingForm = true;
-            var url = (this.form.id) ? `/settings/branch/${this.form.id}/update` : '/settings/branch/store';
-            await axios.post(url, this.form).then(response => {
-                const data = response.data.result;
-                console.log(data);
-                ElMessage({
-                    message: this.$t('success_msg'),
-                    type: 'success',
-                });
-                this.modalForm = false;
-                this.resetForm();
-                this.fetchData();
-            }).catch(error => {
-                this.errors = error.validation;
-                ElMessage({
-                    message: this.$t('error_msg'),
-                    type: 'error',
-                });
-            });
-            this.loadingForm = false;
-        },
-        create(){
-            this.modalForm = true;
-        },
-        resetForm(){
-            this.form.id = null;
-            this.form.name = null;
-            this.form.address = null;
-        },
-        async onEdit(id){
-            await axios.get(`/settings/branch/${id}`).then(response => {
-                const data = response.data;
-                console.log(data);
-                this.form.id = data.id;
-                this.form.name = data.name;
-                this.form.address = data.address;
-                this.modalTitle = this.$t('edit') +' '+this.$t('branch');
-                this.modalForm = true;
-            }).catch(error => {
-                console.log(error);
-            });
-        },
-        onDelete(id){
-            ElMessageBox.confirm(this.$t("delete_warning"), this.$t('warning'), {
-                confirmButtonText: this.$t("ok"),
-                cancelButtonText: this.$t("cancel"),
-                type: 'warning',
-            }).then(() => {
-                // User confirmed deletion
-                axios.delete(`/settings/branch/${id}/delete`).then(() => {
-                    // Deletion successful
-                    this.fetchData();
-                    ElMessage({
-                        type: 'success',
-                        message: this.$t('delete_success'),
-                    });
-                }).catch(error => {
-                    // Error occurred during deletion
-                    console.error('Error deleting branch:', error);
-                    ElMessage({
-                        type: 'error',
-                        message: this.$t('delete_cancel'),
-                    });
-                });
-            }).catch(() => {
-                // User cancelled deletion
-                ElMessage({
-                    type: 'info',
-                    message: this.$t('delete_cancel')
-                });
-            });
-        },
+        loading.value = false;
+    } catch (error) {
+        console.error(error);
     }
-}
+};
+
+const onSubmit = async () => {
+    loading.value = true;
+    const url = form.id ? `/settings/branch/${form.id}/update` : '/settings/branch/store';
+    try {
+        const response = await axios.post(url, form);
+        console.log(response.data.result);
+        ElMessage({ message: 'Success Message', type: 'success' });
+        modalForm.value = false;
+        resetForm();
+        fetchData();
+    } catch (error) {
+        errors.value = error.validation;
+        ElMessage({ message: 'Error Message', type: 'error' });
+    } finally {
+        loading.value = false;
+    }
+};
+
+const create = () => {
+    modalForm.value = true;
+};
+
+const resetForm = () => {
+    form.id = null;
+    form.name = null;
+    form.address = null;
+};
+
+const onEdit = async (id) => {
+    try {
+        const response = await axios.get(`/settings/branch/${id}`);
+        console.log(response.data);
+        Object.assign(form, response.data);
+        modalTitle.value = 'Edit Branch';
+        modalForm.value = true;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const onDelete = async (id) => {
+    try {
+        await ElMessageBox.confirm('Delete Warning', 'Warning', {
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            type: 'warning',
+        });
+        await axios.delete(`/settings/branch/${id}/delete`);
+        fetchData();
+        ElMessage({ type: 'success', message: 'Delete Success' });
+    } catch (error) {
+        console.error('Error deleting branch:', error);
+        ElMessage({ type: 'error', message: 'Delete Cancel' });
+    }
+};
+
+// Lifecycle hooks
+onMounted(() => {
+    fetchData();
+});
+
 </script>

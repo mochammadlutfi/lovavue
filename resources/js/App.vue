@@ -14,9 +14,8 @@ import { ref, watch, computed} from 'vue';
 // Import `useAppBaseStore` explicitly for clarity
 import { useAppBaseStore } from "@/stores/base";
 
-// Use `watch` with `immediate` option for initial call
 watch(
-  () => useAppBaseStore().isInitialized, // Track login state
+  () => useAppBaseStore().isInitialized,
   (isInitialized) => {
     if (!isInitialized) {
       const appBase = useAppBaseStore().initApp();

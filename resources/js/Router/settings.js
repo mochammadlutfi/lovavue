@@ -100,7 +100,14 @@ export default [
           },
           {
             path: 'Branch',
-            component: Branch
+            component: Branch,
+            meta: {
+                requireAuth: true,
+                menuParent: "setting",
+                menuKey: "payment_in",
+                permission: "branch_view",
+                paymentType: "in",
+            }
           },
         ]
 

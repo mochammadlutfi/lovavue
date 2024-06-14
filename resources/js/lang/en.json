@@ -44,7 +44,12 @@
     "host" : "Host",
     "port" : "Port",
     "encrypt" : "Encryption",
-
+    "hours_select" : "{time} Hours => {format}",
+    "old_password" : "Old Password",
+    "new_password" : "New Password",
+    "new_password_confirmation" : "New Password Confirmation",
+    "avatar" : "Avatar",
+    "devices" : "Perangkat",
     "setting" : {
         "general" : {
             "app_name" : "App Name",
@@ -53,7 +58,14 @@
             "company_phone" : "Company Phone",
             "company_address" : "Company Address",
             "default_branch" : "Default Branch",
-            "default_currency" : "Default Currency"
+            "default_currency" : "Default Currency",
+            "date_format" : "Date Format",
+            "time_format" : "Time Format",
+            "logo_light" : "Logo Light",
+            "logo_dark" : "Logo Dark",
+            "logo_light_sm" : "Logo Light Small",
+            "logo_dark_sm" : "Logo Dark Small",
+            "favicon" : "Favicon"
         },
         "email" : {
             "host" : "Mail Host",

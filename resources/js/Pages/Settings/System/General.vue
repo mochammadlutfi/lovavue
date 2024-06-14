@@ -28,6 +28,36 @@
                         <select-branch v-model="form.branch"/>
                     </el-form-item>
                 </el-col>
+                <el-col :span="12">
+                    <el-form-item :label="$t('setting.general.date_format')">
+                        <select-date-format v-model="form.date_format"/>
+                    </el-form-item>
+                    <el-form-item :label="$t('setting.general.time_format')">
+                        <select-time-format v-model="form.time_format"/>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :md="6">
+                    <el-form-item :label="$t('setting.general.logo_light')" :error="errors.company_address">
+                        <upload-image v-model="form.logo_light"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :md="6">
+                    <el-form-item :label="$t('setting.general.logo_dark')" :error="errors.company_address">
+                        <upload-image v-model="form.logo_dark"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :md="6">
+                    <el-form-item :label="$t('setting.general.logo_light_sm')" :error="errors.company_address">
+                        <upload-image v-model="form.logo_light_sm"/>
+                    </el-form-item>
+                </el-col>
+                <el-col :md="6">
+                    <el-form-item :label="$t('setting.general.logo_dark_sm')" :error="errors.company_address">
+                        <upload-image v-model="form.logo_dark_sm"/>
+                    </el-form-item>
+                </el-col>
             </el-row>
             <div class="text-right">
                 <el-button native-type="submit" type="primary">
@@ -42,6 +72,9 @@
 <script setup>
 import { defineProps, onMounted, defineEmits, ref } from 'vue';
 import SelectBranch from '@/Components/Form/SelectBranch.vue';
+import SelectDateFormat from '@/Components/Form/SelectDateFormat.vue';
+import SelectTimeFormat from '@/Components/Form/SelectTimeFormat.vue';
+import UploadImage from '@/Components/Form/UploadImage.vue';
 import { useI18n } from 'vue-i18n';
 const t = useI18n();
 
@@ -66,7 +99,7 @@ const form = ref({
     branch : 1,
     time_zone : null,
     date_format : "d-m-Y",
-    time_format : "H:i",
+    time_format : "HH:mm",
 });
 const errors = ref({});
 const loading = ref(false);

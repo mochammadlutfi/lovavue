@@ -38,6 +38,7 @@ watch(() => props.modelValue, (newValue) => {
     selected.value = newValue;
 });
 
+
 const fetchData = async () => {
   try {
     isLoading.value = true;

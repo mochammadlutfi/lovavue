@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // Base\PermissionSeeder::class,
-            // Base\InitSeeder::class,
+            Base\PermissionSeeder::class,
+            Base\InitSeeder::class,
             Base\LocaleSeeder::class,
             
         ]);

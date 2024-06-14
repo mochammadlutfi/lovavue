@@ -6,6 +6,10 @@ import { useApi } from '@/api/useApi';
 import Cookies from 'js-cookie'
 const web = useApi('web')
 import axios from 'axios';
+import { AbilityBuilder, createMongoAbility} from '@casl/ability';
+import { ABILITY_TOKEN } from '@casl/vue';
+import { inject } from 'vue';
+
 const getJSONFromLocalStorage = (key) => {
     const value = window.localStorage.getItem(key);
 
@@ -24,21 +28,34 @@ export const useAuthStore = defineStore({
         return {
             user: null,
             token: Cookies.get('token'),
-            permission : [],
+            permissions : [],
         }
     },
+
     getters : {
         isLoggedIn: (state) => {
             if (state.token === null || state.token === '' || state.token === undefined) {
                 return false;
             }
             return true;
-        }
+        },
+        // can: (state)=>{
+        //     return this.permissions.includes(permission);
+        // }
     },
+
 	actions: {
         async getUser(){
-            const data = await axios.get('/user');
-            this.user = data.data;
+            const { data } = await axios.get('/profile');
+            console.log(data);
+            this.user = {
+                name : data.name,
+                username : data.username,
+                email : data.email,
+                role : data.roles[0].name,
+                avatar : data.avatar
+            };
+            this.permissions = data.permissions;
         },
         updateUser(user) {
             this.user = user;
@@ -47,6 +64,13 @@ export const useAuthStore = defineStore({
             this.token = token;
             Cookies.set('token', token);
             axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        },
+        hasPermission(permission){
+            if (typeof permission === 'string' || permission instanceof String) {
+                return this.permissions.includes(permission);
+            } else {
+                return permission.every((v) => this.permissions.includes(v));
+            }
         },
 		async login({ email, password }) {
 			const user = useUserStore()

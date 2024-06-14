@@ -25,8 +25,15 @@ Route::namespace('App\Http\Controllers')->name('api.')->group(function(){
     Route::post('/login', 'AuthController@login')->name("login");
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
-        Route::get('/user', 'ProfileController@index');
         Route::post('/logout', 'AuthController@logout')->name("logout");
+
+        Route::prefix('/profile')->name('profile.')->group(function () {
+            Route::get('/', 'ProfileController@index')->name('index');
+            Route::post('/update','ProfileController@update')->name('update');
+            Route::post('/password','ProfileController@password')->name('password');
+
+            Route::get('/device', 'ProfileController@device')->name('show');
+        });
 
         Route::namespace('Settings')->prefix('/settings')->group(function () {
 

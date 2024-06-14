@@ -6,13 +6,13 @@
             <!-- Light Brand Logo -->
             <div class="logo-light">
                 <img :src="app.logo_dark" class="logo-lg h-6" alt="Light logo">
-                <img src="/images/logo-sm.png" class="logo-sm" alt="Small logo">
+                <img :src="app.logo_dark_sm" class="logo-sm" alt="Small logo">
             </div>
 
             <!-- Dark Brand Logo -->
             <div class="logo-dark">
                 <img :src="app.logo_light" class="logo-lg h-6" alt="Dark logo">
-                <img src="/images/logo-sm.png" class="logo-sm" alt="Small logo">
+                <img :src="app.logo_light_sm" class="logo-sm" alt="Small logo">
             </div>
         </router-link>
         

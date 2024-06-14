@@ -22,6 +22,17 @@ const helpers = {
             return fallback;
     }
 }
+const APP = "APP";
+const getJSONFromLocalStorage = (key) => {
+    const value = window.localStorage.getItem(key);
+
+    if (value === 'undefined' || value === 'null' || value === undefined || value === null) {
+        return null;
+    }
+    else {
+        return JSON.parse(value);
+    }
+};
 
 
 export const useAppBaseStore  = defineStore({
@@ -29,7 +40,7 @@ export const useAppBaseStore  = defineStore({
     state: () => {
         return {
             initialized : false,
-            app: {},
+            app: getJSONFromLocalStorage(APP),
             layout: {
               header: true,
               sidebar: true,
@@ -60,7 +71,7 @@ export const useAppBaseStore  = defineStore({
     
     getters: {
         isInitialized(state){
-            return state.initialized && state.app;
+            return (state.app);
         },
         locales :(state) => {
             return state.app.locales;
@@ -233,13 +244,16 @@ export const useAppBaseStore  = defineStore({
                 const response = await axios.get('/base');
                 if(response.status == 200){
                     const data = response.data;
-                    this.initialized = true;
                     this.app = data;
+                    window.localStorage.setItem(APP, JSON.stringify(data));
                 }
             } catch (error) {
                 console.error(error);
             }
-        }
+        },
 
+        async updateApp(){
+            
+        }
     }
 })
